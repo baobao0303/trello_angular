@@ -5,6 +5,7 @@ import { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import { secret } from "../config/config";
 import { error } from "console";
+import { ExpressRequestInterface } from "../types/expressRequest.interface";
 
 const normailUser = (user: UserDocument) => {
   const token = jwt.sign(
@@ -62,4 +63,11 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
   } catch (error) {
     next(error);
   }
+};
+export const currentUser = async (req: ExpressRequestInterface, res: Response): Promise<void> => {
+  if (!req.user) {
+    res.sendStatus(401);
+    return;
+  }
+  res.send(normailUser(req.user));
 };
