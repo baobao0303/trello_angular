@@ -7,4 +7,6 @@ export interface IUser {
   createAt: Date;
 }
 
-export interface UserDocument extends IUser, Document {}
+export interface UserDocument extends IUser, Document {
+  validatorPassword(param1: string): Promise<boolean>;
+}

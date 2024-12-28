@@ -4,6 +4,7 @@ import { UserDocument } from "../types/user.interface";
 import { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import { secret } from "../config/config";
+import { error } from "console";
 
 const normailUser = (user: UserDocument) => {
   const token = jwt.sign(
@@ -39,5 +40,26 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
       res.status(404).json(message);
     }
     next(err);
+  }
+};
+
+export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email }).select("+password");
+
+    if (!user) {
+      res.status(401).json({ message: "Invalid email or password" });
+      return;
+    }
+
+    const isValidPassword = await user.validatorPassword(req.body.password);
+    if (!isValidPassword) {
+      res.status(401).json({ message: "Invalid email or password" });
+      return;
+    }
+
+    res.status(200).json({ message: "Login successful", user });
+  } catch (error) {
+    next(error);
   }
 };
