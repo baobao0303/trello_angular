@@ -42,8 +42,8 @@ userShema.pre("save", async function (next) {
   }
 });
 
-userShema.methods.validatorPassword = function (password: string) {
-  return bcryptjs.compare(password, this.password);
+userShema.methods["validatorPassword"] = function (password: string) {
+  return bcryptjs.compare(password, this["password"]); // Use bracket notation
 };
 
 export default model<UserDocument>("User", userShema);

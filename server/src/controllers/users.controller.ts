@@ -4,7 +4,6 @@ import { UserDocument } from "../types/user.interface";
 import { Error } from "mongoose";
 import jwt from "jsonwebtoken";
 import { secret } from "../config/config";
-import { error } from "console";
 import { ExpressRequestInterface } from "../types/expressRequest.interface";
 
 const normailUser = (user: UserDocument) => {
@@ -33,12 +32,19 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
     // console.log("newUser", newUser);
     const saveUser = await newUser.save();
     console.log("saveUser", saveUser);
-    res.status(402).json(normailUser(newUser));
+    res.status(202).json(normailUser(newUser));
   } catch (err) {
     console.log("error", err);
+
     if (err instanceof Error.ValidationError) {
       const message = Object.values(err.errors).map((error) => error.message);
       res.status(404).json(message);
+    } else if ((err as any).code === 11000) {
+      const message = "Email already in use";
+      res.status(400).json(message);
+    } else {
+      const message = "Internal server error";
+      res.status(500).json(message);
     }
     next(err);
   }
