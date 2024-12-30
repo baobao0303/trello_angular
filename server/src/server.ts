@@ -3,6 +3,7 @@ const express = require("express");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const PORT = 4001;
 
@@ -13,6 +14,7 @@ const io = new Server(httpServer);
 // MIDDLEWARE
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 // SOCKET.IO
 io.on("connection", () => {
